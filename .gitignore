@@ -1,0 +1,7 @@
+gradlew.bat
+gradlew
+eclipse/
+*.iml
+*.ipr
+*.iws
+.gradle/
