@@ -21,7 +21,7 @@ import santa.lore.block.BlockLoreCustomizer;
 import santa.lore.network.LoreChangePacket;
 import santa.lore.network.LoreChangePacketHandler;
 
-@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "1.0.0")
+@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "2.0.0")
 public class CustomizedLore {
     public static final String MOD_ID = "customizedlore";
 
