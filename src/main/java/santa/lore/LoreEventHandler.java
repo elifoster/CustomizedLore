@@ -1,9 +1,9 @@
 package santa.lore;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class LoreEventHandler {
     @SubscribeEvent

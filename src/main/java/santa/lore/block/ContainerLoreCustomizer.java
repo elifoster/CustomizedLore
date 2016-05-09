@@ -5,6 +5,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class ContainerLoreCustomizer extends Container {
@@ -20,7 +21,7 @@ public class ContainerLoreCustomizer extends Container {
     private World world;
     public String itemLore = "";
 
-    public ContainerLoreCustomizer(InventoryPlayer playerInv, final World world, final int x, final int y, final int z, EntityPlayer player) {
+    public ContainerLoreCustomizer(InventoryPlayer playerInv, final World world, final BlockPos pos, EntityPlayer player) {
         this.world = world;
         this.addSlotToContainer(new Slot(input, 0, 50, 47) {
             @Override
@@ -68,8 +69,8 @@ public class ContainerLoreCustomizer extends Container {
     public void onCraftMatrixChanged(IInventory inv) {
         super.onCraftMatrixChanged(inv);
 
-        if (inv == this.input) {
-            this.updateLore(this.itemLore);
+        if (inv == input) {
+            this.updateLore(itemLore);
         }
     }
 
@@ -91,9 +92,9 @@ public class ContainerLoreCustomizer extends Container {
             this.output.setInventorySlotContents(0, null);
         } else {
             ItemStack copy = itemstack.copy();
-            setNBT(copy, this.itemLore);
-            this.output.setInventorySlotContents(0, copy);
-            this.detectAndSendChanges();
+            setNBT(copy, itemLore);
+            output.setInventorySlotContents(0, copy);
+            detectAndSendChanges();
         }
     }
 
@@ -102,9 +103,7 @@ public class ContainerLoreCustomizer extends Container {
         return null;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void updateLore(String newLore) {
-        newLore = newLore.replace("&&", "&");
         char[] chars = newLore.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == chars.length - 1) {
@@ -112,20 +111,22 @@ public class ContainerLoreCustomizer extends Container {
             }
             char character = chars[i];
             char nextChar = chars[i + 1];
-            if (character == '&' && nextChar != '&') {
+            if (character == '&' && nextChar != '&' && nextChar != ' ') {
                 chars[i] = '§';
             }
         }
-        this.itemLore = new String(chars);
-        this.updateOutput();
+        String formattedLore = new String(chars);
+        formattedLore = formattedLore.replace("&&", "&");
+        itemLore = formattedLore;
+        updateOutput();
     }
 
     @Override
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
 
-        if (!this.world.isRemote) {
-            ItemStack itemstack = this.input.getStackInSlot(0);
+        if (!world.isRemote) {
+            ItemStack itemstack = input.getStackInSlot(0);
             if (itemstack != null) {
                 player.dropPlayerItemWithRandomChoice(itemstack, false);
             }

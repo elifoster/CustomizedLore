@@ -6,7 +6,9 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
@@ -14,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import santa.lore.CustomizedLore;
 import santa.lore.network.LoreChangePacket;
 
+import java.io.IOException;
 import java.util.List;
 
 public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
@@ -21,8 +24,8 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
     private ContainerLoreCustomizer container;
     private static final ResourceLocation texture = new ResourceLocation(CustomizedLore.MOD_ID + ":textures/gui/customizer.png");
 
-    public GuiLoreCustomizer(InventoryPlayer invPlayer, World world, int x, int y, int z) {
-        super(new ContainerLoreCustomizer(invPlayer, world, x, y, z, Minecraft.getMinecraft().thePlayer));
+    public GuiLoreCustomizer(InventoryPlayer invPlayer, World world, BlockPos pos) {
+        super(new ContainerLoreCustomizer(invPlayer, world, pos, Minecraft.getMinecraft().thePlayer));
         this.container = (ContainerLoreCustomizer) this.inventorySlots;
     }
 
@@ -30,40 +33,40 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
     public void initGui() {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        this.textField = new GuiTextField(this.fontRendererObj, i + 62, j + 24, 103, 12);
-        this.textField.setTextColor(-1);
-        this.textField.setDisabledTextColour(-1);
-        this.textField.setEnableBackgroundDrawing(false);
-        this.textField.setMaxStringLength(300);
-        this.inventorySlots.removeCraftingFromCrafters(this);
-        this.inventorySlots.addCraftingToCrafters(this);
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+        textField = new GuiTextField(0, fontRendererObj, i + 62, j + 24, 103, 12);
+        textField.setTextColor(-1);
+        textField.setDisabledTextColour(-1);
+        textField.setEnableBackgroundDrawing(false);
+        textField.setMaxStringLength(300);
+        inventorySlots.removeCraftingFromCrafters(this);
+        inventorySlots.onCraftGuiOpened(this);
     }
 
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
-        this.inventorySlots.removeCraftingFromCrafters(this);
+        inventorySlots.removeCraftingFromCrafters(this);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(texture);
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-        this.drawTexturedModalRect(k + 59, l + 20, 0, this.ySize + (this.container.getSlot(0).getHasStack() ? 0 : 16), 110, 16);
+        mc.getTextureManager().bindTexture(texture);
+        int k = (width - xSize) / 2;
+        int l = (height - ySize) / 2;
+        drawTexturedModalRect(k, l, 0, 0, xSize, ySize);
+        drawTexturedModalRect(k + 59, l + 20, 0, ySize + (container.getSlot(0).getHasStack() ? 0 : 16), 110, 16);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {}
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {}
 
     private void updateText() {
-        String s = this.textField.getText();
-        if (s.equals(this.container.itemLore)) {
+        String s = textField.getText();
+        if (s.equals(container.itemLore)) {
             return;
         }
         LoreChangePacket packet = new LoreChangePacket(s);
@@ -71,23 +74,23 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
     }
 
     @Override
-    protected void keyTyped(char charTyped, int par2) {
-        if (this.textField.textboxKeyTyped(charTyped, par2)) {
-            this.updateText();
+    protected void keyTyped(char charTyped, int keyCode) throws IOException {
+        if (textField.textboxKeyTyped(charTyped, keyCode)) {
+            updateText();
         } else {
-            super.keyTyped(charTyped, par2);
+            super.keyTyped(charTyped, keyCode);
         }
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int z) {
-        super.mouseClicked(x, y, z);
-        this.textField.mouseClicked(x, y, z);
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        textField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    public void sendContainerAndContentsToPlayer(Container container, List contents) {
-        this.sendSlotContents(container, 0, container.getSlot(0).getStack());
+    public void updateCraftingInventory(Container container, List<ItemStack> contents) {
+        sendSlotContents(container, 0, container.getSlot(0).getStack());
     }
 
     @Override
@@ -96,21 +99,24 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
             boolean hasLore = itemstack != null && itemstack.hasTagCompound() &&
               itemstack.getTagCompound().hasKey("CustomLore");
             String s = hasLore ? itemstack.getTagCompound().getString("CustomLore") : "";
-            this.textField.setText(s);
-            this.textField.setEnabled(itemstack != null);
+            textField.setText(s);
+            textField.setEnabled(itemstack != null);
 
             if (itemstack != null) {
-                this.updateText();
+                updateText();
             }
         }
     }
 
     @Override
-    public void sendProgressBarUpdate(Container container, int p_71112_2_, int p_71112_3_) {}
+    public void sendProgressBarUpdate(Container container, int varToUpdate, int newValue) {}
 
     @Override
-    public void drawScreen(int par1, int par2, float par3) {
-        super.drawScreen(par1, par2, par3);
-        this.textField.drawTextBox();
+    public void sendAllWindowProperties(Container p_175173_1_, IInventory p_175173_2_) {}
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        textField.drawTextBox();
     }
 }

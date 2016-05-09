@@ -1,0 +1,19 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "blocks/crafting_table_front",
+    "down": "blocks/planks_oak",
+    "up": "customizedlore:blocks/lore_customizer_top",
+    "north": "customizedlore:blocks/lore_customizer_side",
+    "east": "customizedlore:blocks/lore_customizer_side",
+    "south": "customizedlore:blocks/lore_customizer_side",
+    "west": "customizedlore:blocks/lore_customizer_side"
+  },
+  "display": {
+    "thirdperson": {
+      "rotation": [ 10, -45, 170 ],
+      "translation": [ 0, 1.5, -2.75 ],
+      "scale": [ 0.375, 0.375, 0.375 ]
+    }
+  }
+}

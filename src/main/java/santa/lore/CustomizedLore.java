@@ -1,16 +1,20 @@
 package santa.lore;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import santa.lore.block.BlockLoreCustomizer;
@@ -40,6 +44,13 @@ public class CustomizedLore {
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(mod, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(new LoreEventHandler());
+
+        if (event.getSide().isClient()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(LORE_CUSTOMIZER), 0,
+              new ModelResourceLocation(MOD_ID + ":" + LORE_CUSTOMIZER_NAME, "inventory"));
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(LORE_CUSTOMIZER),
+              0, new ModelResourceLocation(MOD_ID + ":" + LORE_CUSTOMIZER_NAME, "inventory"));
+        }
 
         // These are the 2 tags that I know are used for the workbench.
         OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
