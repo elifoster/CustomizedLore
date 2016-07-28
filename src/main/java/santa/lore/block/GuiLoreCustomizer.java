@@ -5,21 +5,23 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import santa.lore.CustomizedLore;
 import santa.lore.network.LoreChangePacket;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
+public class GuiLoreCustomizer extends GuiContainer implements IContainerListener {
     private GuiTextField textField;
     private ContainerLoreCustomizer container;
     private static final ResourceLocation texture = new ResourceLocation(CustomizedLore.MOD_ID + ":textures/gui/customizer.png");
@@ -40,15 +42,15 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
         textField.setDisabledTextColour(-1);
         textField.setEnableBackgroundDrawing(false);
         textField.setMaxStringLength(300);
-        inventorySlots.removeCraftingFromCrafters(this);
-        inventorySlots.onCraftGuiOpened(this);
+        inventorySlots.removeListener(this);
+        inventorySlots.addListener(this);
     }
 
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
-        inventorySlots.removeCraftingFromCrafters(this);
+        inventorySlots.removeListener(this);
     }
 
     @Override
@@ -89,13 +91,17 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
     }
 
     @Override
-    public void updateCraftingInventory(Container container, List<ItemStack> contents) {
-        sendSlotContents(container, 0, container.getSlot(0).getStack());
+    public void updateCraftingInventory(@Nonnull Container container, @Nonnull List<ItemStack> contents) {
+        ItemStack inSlotZero = container.getSlot(0).getStack();
+        if (inSlotZero != null) {
+            sendSlotContents(container, 0, inSlotZero);
+        }
     }
 
     @Override
-    public void sendSlotContents(Container container, int slot, ItemStack itemstack) {
+    public void sendSlotContents(@Nonnull Container container, int slot, @Nullable ItemStack itemstack) {
         if (slot == 0) {
+            //noinspection ConstantConditions
             boolean hasLore = itemstack != null && itemstack.hasTagCompound() &&
               itemstack.getTagCompound().hasKey("CustomLore");
             String s = hasLore ? itemstack.getTagCompound().getString("CustomLore") : "";
@@ -109,10 +115,10 @@ public class GuiLoreCustomizer extends GuiContainer implements ICrafting {
     }
 
     @Override
-    public void sendProgressBarUpdate(Container container, int varToUpdate, int newValue) {}
+    public void sendProgressBarUpdate(@Nonnull Container container, int varToUpdate, int newValue) {}
 
     @Override
-    public void sendAllWindowProperties(Container p_175173_1_, IInventory p_175173_2_) {}
+    public void sendAllWindowProperties(@Nonnull Container container, @Nonnull IInventory inventory) {}
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {

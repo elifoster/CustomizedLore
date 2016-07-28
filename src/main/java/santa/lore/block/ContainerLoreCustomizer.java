@@ -5,8 +5,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 public class ContainerLoreCustomizer extends Container {
     private IInventory output = new InventoryCraftResult();
@@ -61,7 +63,7 @@ public class ContainerLoreCustomizer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public boolean canInteractWith(@Nonnull EntityPlayer player) {
         return true;
     }
 
@@ -74,7 +76,8 @@ public class ContainerLoreCustomizer extends Container {
         }
     }
 
-    public static void setNBT(ItemStack stack, String lore) {
+    private static void setNBT(ItemStack stack, String lore) {
+        //noinspection ConstantConditions
         if (lore.isEmpty() && stack.hasTagCompound() && stack.getTagCompound().hasKey("CustomLore")) {
             stack.getTagCompound().removeTag("CustomLore");
         } else {
@@ -128,7 +131,7 @@ public class ContainerLoreCustomizer extends Container {
         if (!world.isRemote) {
             ItemStack itemstack = input.getStackInSlot(0);
             if (itemstack != null) {
-                player.dropPlayerItemWithRandomChoice(itemstack, false);
+                player.dropItem(itemstack, false);
             }
         }
     }

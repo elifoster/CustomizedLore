@@ -2,7 +2,7 @@ package santa.lore;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -21,7 +21,7 @@ import santa.lore.block.BlockLoreCustomizer;
 import santa.lore.network.LoreChangePacket;
 import santa.lore.network.LoreChangePacketHandler;
 
-@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "2.0.0")
+@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "3.0.0", acceptedMinecraftVersions = "[1.9,1.10.2]")
 public class CustomizedLore {
     public static final String MOD_ID = "customizedlore";
 
@@ -53,9 +53,9 @@ public class CustomizedLore {
         }
 
         // These are the 2 tags that I know are used for the workbench.
-        OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
-        OreDictionary.registerOre("crafterWood", Blocks.crafting_table);
-        GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "craftingTableWood", Items.book));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "crafterWood", Items.book));
+        OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
+        OreDictionary.registerOre("crafterWood", Blocks.CRAFTING_TABLE);
+        GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "craftingTableWood", Items.BOOK));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "crafterWood", Items.BOOK));
     }
 }
