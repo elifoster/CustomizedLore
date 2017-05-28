@@ -57,5 +57,6 @@ public class CustomizedLore {
         OreDictionary.registerOre("crafterWood", Blocks.CRAFTING_TABLE);
         GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "craftingTableWood", Items.BOOK));
         GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "crafterWood", Items.BOOK));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(LORE_CUSTOMIZER, "workbench", Items.BOOK));
     }
 }
