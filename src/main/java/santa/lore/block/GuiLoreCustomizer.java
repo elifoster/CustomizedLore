@@ -8,6 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,7 +20,6 @@ import santa.lore.network.LoreChangePacket;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.List;
 
 public class GuiLoreCustomizer extends GuiContainer implements IContainerListener {
     private GuiTextField textField;
@@ -27,7 +27,7 @@ public class GuiLoreCustomizer extends GuiContainer implements IContainerListene
     private static final ResourceLocation texture = new ResourceLocation(CustomizedLore.MOD_ID + ":textures/gui/customizer.png");
 
     public GuiLoreCustomizer(InventoryPlayer invPlayer, World world, BlockPos pos) {
-        super(new ContainerLoreCustomizer(invPlayer, world, pos, Minecraft.getMinecraft().thePlayer));
+        super(new ContainerLoreCustomizer(invPlayer, world, pos, Minecraft.getMinecraft().player));
         this.container = (ContainerLoreCustomizer) this.inventorySlots;
     }
 
@@ -37,7 +37,7 @@ public class GuiLoreCustomizer extends GuiContainer implements IContainerListene
         Keyboard.enableRepeatEvents(true);
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
-        textField = new GuiTextField(0, fontRendererObj, i + 62, j + 24, 103, 12);
+        textField = new GuiTextField(0, fontRenderer, i + 62, j + 24, 103, 12);
         textField.setTextColor(-1);
         textField.setDisabledTextColour(-1);
         textField.setEnableBackgroundDrawing(false);
@@ -91,9 +91,9 @@ public class GuiLoreCustomizer extends GuiContainer implements IContainerListene
     }
 
     @Override
-    public void updateCraftingInventory(@Nonnull Container container, @Nonnull List<ItemStack> contents) {
+    public void updateCraftingInventory(@Nonnull Container container, @Nonnull NonNullList<ItemStack> contents) {
         ItemStack inSlotZero = container.getSlot(0).getStack();
-        if (inSlotZero != null) {
+        if (!inSlotZero.isEmpty()) {
             sendSlotContents(container, 0, inSlotZero);
         }
     }
@@ -102,13 +102,13 @@ public class GuiLoreCustomizer extends GuiContainer implements IContainerListene
     public void sendSlotContents(@Nonnull Container container, int slot, @Nullable ItemStack itemstack) {
         if (slot == 0) {
             //noinspection ConstantConditions
-            boolean hasLore = itemstack != null && itemstack.hasTagCompound() &&
+            boolean hasLore = !itemstack.isEmpty() && itemstack.hasTagCompound() &&
               itemstack.getTagCompound().hasKey("CustomLore");
             String s = hasLore ? itemstack.getTagCompound().getString("CustomLore") : "";
             textField.setText(s);
-            textField.setEnabled(itemstack != null);
+            textField.setEnabled(!itemstack.isEmpty());
 
-            if (itemstack != null) {
+            if (!itemstack.isEmpty()) {
                 updateText();
             }
         }

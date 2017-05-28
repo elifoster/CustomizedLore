@@ -21,7 +21,7 @@ import santa.lore.block.BlockLoreCustomizer;
 import santa.lore.network.LoreChangePacket;
 import santa.lore.network.LoreChangePacketHandler;
 
-@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "3.0.0", acceptedMinecraftVersions = "[1.9,1.10.2]")
+@Mod(name = "CustomizedLore", modid = CustomizedLore.MOD_ID, version = "3.0.0", acceptedMinecraftVersions = "[1.11,1.11.2]")
 public class CustomizedLore {
     public static final String MOD_ID = "customizedlore";
 

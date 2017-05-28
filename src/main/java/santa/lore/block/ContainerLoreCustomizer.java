@@ -40,13 +40,14 @@ public class ContainerLoreCustomizer extends Container {
 
             @Override
             public boolean canTakeStack(EntityPlayer player) {
-                return this.getHasStack();
+                return getHasStack();
             }
 
+            @Nonnull
             @Override
-            public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
-                ContainerLoreCustomizer.this.input.setInventorySlotContents(0, null);
-
+            public ItemStack onTake(EntityPlayer player, @Nonnull ItemStack stack) {
+                ContainerLoreCustomizer.this.input.setInventorySlotContents(0, ItemStack.EMPTY);
+                return stack;
             }
         });
 
@@ -91,8 +92,8 @@ public class ContainerLoreCustomizer extends Container {
     private void updateOutput() {
         ItemStack itemstack = this.input.getStackInSlot(0);
 
-        if (itemstack == null) {
-            this.output.setInventorySlotContents(0, null);
+        if (itemstack.isEmpty()) {
+            this.output.setInventorySlotContents(0, ItemStack.EMPTY);
         } else {
             ItemStack copy = itemstack.copy();
             setNBT(copy, itemLore);
@@ -101,9 +102,10 @@ public class ContainerLoreCustomizer extends Container {
         }
     }
 
+    @Nonnull
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public void updateLore(String newLore) {
@@ -130,7 +132,7 @@ public class ContainerLoreCustomizer extends Container {
 
         if (!world.isRemote) {
             ItemStack itemstack = input.getStackInSlot(0);
-            if (itemstack != null) {
+            if (!itemstack.isEmpty()) {
                 player.dropItem(itemstack, false);
             }
         }

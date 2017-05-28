@@ -9,7 +9,7 @@ import santa.lore.block.ContainerLoreCustomizer;
 public class LoreChangePacketHandler implements IMessageHandler<LoreChangePacket, IMessage> {
     @Override
     public IMessage onMessage(LoreChangePacket message, MessageContext ctx) {
-        EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP player = ctx.getServerHandler().player;
         ((ContainerLoreCustomizer) player.openContainer).updateLore(message.lore);
         return null;
     }

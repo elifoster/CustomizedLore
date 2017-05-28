@@ -12,7 +12,7 @@ public class LoreEventHandler {
         ItemStack stack = event.getItemStack();
         EntityPlayer player = event.getEntityPlayer();
         //noinspection ConstantConditions
-        if (player == null || !player.worldObj.isRemote || stack == null || !stack.hasTagCompound() ||
+        if (player == null || !player.world.isRemote || stack == null || !stack.hasTagCompound() ||
           !stack.getTagCompound().hasKey("CustomLore")) {
             return;
         }
